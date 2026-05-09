@@ -1,12 +1,9 @@
 <?php
-// config/Mailer.php - Version corrigée avec design professionnel de facture
 
-// Empêcher l'accès direct
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
     die("Accès direct interdit.");
 }
 
-// Inclure les fichiers PHPMailer
 require_once dirname(__DIR__) . '/phpmailer/PHPMailer.php';
 require_once dirname(__DIR__) . '/phpmailer/SMTP.php';
 require_once dirname(__DIR__) . '/phpmailer/Exception.php';
@@ -28,12 +25,12 @@ class Mailer {
         $this->config = [
             'app_name' => 'Ecole Gestion Scolaire',
             'site_url' => 'http://localhost/paiement_scolaire',
-            'email_from' => 'chalij68@gmail.com',
-            'email_from_name' => 'Ecole Gestion Scolaire',
-            'email_reply_to' => 'chalij68@gmail.com',
+            'email_from' => 'votre email ici ',
+            'email_from_name' => 'Gestion Scolaire',
+            'email_reply_to' => 'votre email ici ',
             'smtp_host' => 'smtp.gmail.com',
-            'smtp_user' => 'chalij68@gmail.com',
-            'smtp_pass' => 'gzvloyeflswyyodv',
+            'smtp_user' => 'votre email ici ',
+            'smtp_pass' => 'mot de passe de application ',
             'smtp_port' => 587,
             'smtp_secure' => 'tls',
             'debug_mode' => false
@@ -73,16 +70,12 @@ class Mailer {
                 ]
             ];
             
-            error_log("✅ PHPMailer initialisé avec succès");
             
         } catch (Exception $e) {
-            error_log("❌ Erreur PHPMailer: " . $e->getMessage());
+            error_log(" Erreur PHPMailer: " . $e->getMessage());
         }
     }
     
-    /**
-     * Envoyer un email avec pièce jointe
-     */
     public function sendEmailWithAttachment($to, $toName, $subject, $body, $attachmentPath = null) {
         try {
             $this->mail->clearAddresses();
@@ -97,36 +90,30 @@ class Mailer {
             
             if ($attachmentPath && file_exists($attachmentPath)) {
                 $this->mail->addAttachment($attachmentPath);
-                error_log("✅ Pièce jointe ajoutée: " . $attachmentPath);
+                error_log("Pièce jointe ajoutée: " . $attachmentPath);
             }
             
             $result = $this->mail->send();
             
             if ($result) {
-                error_log("✅ Email envoyé avec succès à: $to - Sujet: $subject");
+                error_log("Email envoyé avec succès à: $to - Sujet: $subject");
                 return true;
             } else {
-                error_log("❌ Échec d'envoi: " . $this->mail->ErrorInfo);
+                error_log("Échec d'envoi: " . $this->mail->ErrorInfo);
                 return false;
             }
             
         } catch (Exception $e) {
-            error_log("❌ Erreur d'envoi d'email: " . $e->getMessage());
+            error_log("Erreur d'envoi d'email: " . $e->getMessage());
             return false;
         }
     }
     
-    /**
-     * Envoyer un email simple (sans pièce jointe)
-     */
     public function sendSimpleEmail($to, $toName, $subject, $body) {
         return $this->sendEmailWithAttachment($to, $toName, $subject, $body, null);
     }
 
 
-    /**
-     * Envoyer un email de facture avec design professionnel
-     */
     public function sendFactureEmail($to, $toName, $factureData, $pdfPath = null) {
         $subject = "Votre facture de scolarité N° " . $factureData['numero_facture'];
         
@@ -324,7 +311,7 @@ class Mailer {
                     </div>
                     
                     <div class="section-title">
-                        💰 Détails du paiement
+                        Détails du paiement
                     </div>
                     <table class="items-table">
                         <thead>
@@ -333,7 +320,7 @@ class Mailer {
                         <tbody>
                             <tr>
                                 <td>' . ($factureData['details'][0]['description'] ?? 'Frais de scolarité') . '</td>
-                                <td><strong>' . number_format($factureData['montant_total'], 0, ',', ' ') . ' FCFA</strong></td>
+                                <td><strong>' . number_format($factureData['montant_total'], 0, ',', ' ') . ' USD</strong></td>
                             </tr>
                             <tr>
                                 <td>Date d\'émission</td>
@@ -343,9 +330,9 @@ class Mailer {
                     </table>
                     
                     <div class="total-section">
-                        <div class="total-line"><strong>Montant total :</strong> ' . number_format($factureData['montant_total'], 0, ',', ' ') . ' FCFA</div>
-                        <div class="total-line"><strong>Montant payé :</strong> ' . number_format($factureData['montant_paye'], 0, ',', ' ') . ' FCFA</div>
-                        <div class="total-line grand-total"><strong>Reste à payer :</strong> ' . number_format($montant_restant, 0, ',', ' ') . ' FCFA</div>
+                        <div class="total-line"><strong>Montant total :</strong> ' . number_format($factureData['montant_total'], 0, ',', ' ') . ' USD</div>
+                        <div class="total-line"><strong>Montant payé :</strong> ' . number_format($factureData['montant_paye'], 0, ',', ' ') . ' USD</div>
+                        <div class="total-line grand-total"><strong>Reste à payer :</strong> ' . number_format($montant_restant, 0, ',', ' ') . ' USD</div>
                     </div>
                     
                     <div style="text-align: center;">
@@ -356,14 +343,14 @@ class Mailer {
                     </div>
                     
                     <div style="text-align: center;">
-                        <a href="' . $this->config['site_url'] . '/dashboard.php?page=factures" class="btn">📄 Voir toutes mes factures</a>
+                        <a href="' . $this->config['site_url'] . '/dashboard.php?page=factures" class="btn"> Voir toutes mes factures</a>
                     </div>
                 </div>
                 
                 <div class="footer">
                     <p>Merci de votre confiance ! Ce document fait office de facture officielle.</p>
-                    <p>📞 +225 XX XX XX XX | ✉️ contact@ecole.com | 🌐 www.ecole.com</p>
-                    <p>© ' . date('Y') . ' École de Gestion Scolaire. Tous droits réservés.</p>
+                    <p> +225 XX XX XX XX | contact@ecole.com | www.ecole.com</p>
+                    <p>' . date('Y') . ' École de Gestion Scolaire. Tous droits réservés.</p>
                 </div>
             </div>
         </body>
@@ -373,10 +360,6 @@ class Mailer {
     }
     
 }
-
-// ============================================
-// FONCTIONS HELPER
-// ============================================
 
 function getMailer() {
     static $mailer = null;
